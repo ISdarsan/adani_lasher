@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lasher_adani/admin_dashboard_page.dart';
-import 'package:lasher_adani/login_page.dart';
-import 'package:lasher_adani/registration_page.dart';
-import 'package:lasher_adani/splash_page.dart';
-import 'package:lasher_adani/supervisor_dashboard_page.dart';
-import 'package:lasher_adani/worker_dashboard_page.dart';
+import 'splash_page.dart';
+import 'login_page.dart';
+import 'registration_page.dart';
+import 'pending_approval_page.dart';
+import 'role_splash_page.dart';
+import 'admin_dashboard_page.dart';
+import 'supervisor_dashboard_page.dart';
+import 'worker_dashboard_page.dart';
+import 'approve_workers_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,9 +33,12 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegistrationPage(),
+        '/pending_approval': (context) => const PendingApprovalPage(),
+        // Note: RoleSplashPage is navigated to directly, not via a named route
         '/lasher/admin': (context) => const AdminDashboardPage(),
         '/lasher/supervisor': (context) => const SupervisorDashboardPage(),
         '/lasher/worker': (context) => const WorkerDashboardPage(),
+        // Note: ApproveWorkersPage is also navigated to directly for now
       },
     );
   }

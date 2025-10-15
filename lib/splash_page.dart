@@ -1,5 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'dart:async';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -12,64 +13,33 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    // After 3 seconds, navigate to the login page
-    Timer(const Duration(seconds: 3), () {
-      // Check if the widget is still in the tree before navigating
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
+    // Stay on splash for 2 seconds then navigate
+    Timer(const Duration(seconds: 2), () {
+      Navigator.pushReplacementNamed(context, '/login');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Define the gradient for the welcome text
-    const Gradient blueGradient = LinearGradient(
-      colors: [
-        Color(0xFF003C8F), // Dark blue
-        Color(0xFF2196F3), // Light blue
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Your app logo
+            // Your logo in the center
             Image.asset(
               'assets/LOGO.png',
-              width: 150,
-              height: 150,
+              width: 140,   // logo width
+              height: 140,  // logo height
             ),
-            const SizedBox(height: 25),
-            // "Welcome to Lasher" text with a gradient color
-            ShaderMask(
-              shaderCallback: (bounds) => blueGradient.createShader(
-                Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-              ),
-              child: const Text(
-                'Welcome to Lasher',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // This color is necessary for ShaderMask
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-            // A simple loading indicator
-            const SizedBox(
-              width: 30,
-              height: 30,
-              child: CircularProgressIndicator(
-                strokeWidth: 3,
-                color: Color(0xFF2196F3), // Matches the light blue in gradient
-              ),
+            const SizedBox(height: 20), // space between logo and ring
+            // Smaller neon ring animation below the logo
+            Lottie.asset(
+              'assets/neon_ring.json',
+              width: 80,   // smaller width
+              height: 80,  // smaller height
+              repeat: true,
             ),
           ],
         ),

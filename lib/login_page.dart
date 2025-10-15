@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'role_splash_page.dart'; // Import the new role splash page
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,7 +15,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Define the gradient for the welcome text
     const Gradient blueGradient = LinearGradient(
       colors: [
         Color(0xFF003C8F), // Dark blue
@@ -32,14 +32,12 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Your app logo
               Image.asset(
                 'assets/LOGO.png',
                 width: 120,
                 height: 120,
               ),
               const SizedBox(height: 20),
-              // "Welcome to Lasher" text with a gradient color
               ShaderMask(
                 shaderCallback: (bounds) => blueGradient.createShader(
                   Rect.fromLTWH(0, 0, bounds.width, bounds.height),
@@ -56,7 +54,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 40),
-              // Email field
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -72,7 +69,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Password field with an eye icon to toggle visibility
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -100,20 +96,29 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Modern gradient login button with demo role logic
               GestureDetector(
                 onTap: () {
                   final email = _emailController.text.trim();
                   final pass = _passwordController.text.trim();
+                  String? role;
 
                   if (email == 'admin@lasher.com' && pass == '1234') {
-                    Navigator.pushReplacementNamed(context, '/lasher/admin');
+                    role = 'Admin';
                   } else if (email == 'supervisor@lasher.com' &&
                       pass == '1234') {
-                    Navigator.pushReplacementNamed(
-                        context, '/lasher/supervisor');
+                    role = 'Supervisor';
                   } else if (email == 'worker@lasher.com' && pass == '1234') {
-                    Navigator.pushReplacementNamed(context, '/lasher/worker');
+                    role = 'Worker';
+                  }
+
+                  if (role != null) {
+                    // Navigate to the RoleSplashPage with the correct role
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RoleSplashPage(role: role!),
+                      ),
+                    );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -150,7 +155,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              // Combined Forgot Password and Register link
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
