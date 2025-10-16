@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'approve_workers_page.dart'; // Import the new page
+import 'approve_workers_page.dart'; // Import the page that was missing
 
 // TODO: Import the other pages for each feature when they are created
 // import 'my_team_page.dart';
@@ -43,7 +43,6 @@ class SupervisorDashboardPage extends StatelessWidget {
           elevation: 3,
         ),
       ),
-      // The drawer now contains the new, more detailed options
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -116,7 +115,7 @@ class SupervisorDashboardPage extends StatelessWidget {
           ],
         ),
       ),
-      // The body of the dashboard remains the same as the improved version
+      // The body of the dashboard
       body: Column(
         children: [
           _buildStatsHeader(),

@@ -4,14 +4,15 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.9.2 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  lottie: ^3.1.2 # Added lottie here
+  lottie: ^3.1.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -24,5 +25,5 @@ flutter:
 
   assets:
     - assets/LOGO.png
-    - assets/neon_ring.json # Added the animation file here
+    - assets/neon_ring.json
 

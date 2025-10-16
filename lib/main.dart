@@ -3,6 +3,7 @@ import 'splash_page.dart';
 import 'login_page.dart';
 import 'registration_page.dart';
 import 'pending_approval_page.dart';
+import 'access_denied_page.dart'; // Import the new page
 import 'role_splash_page.dart';
 import 'admin_dashboard_page.dart';
 import 'supervisor_dashboard_page.dart';
@@ -34,11 +35,10 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegistrationPage(),
         '/pending_approval': (context) => const PendingApprovalPage(),
-        // Note: RoleSplashPage is navigated to directly, not via a named route
+        '/access_denied': (context) => const AccessDeniedPage(), // Add the new route
         '/lasher/admin': (context) => const AdminDashboardPage(),
         '/lasher/supervisor': (context) => const SupervisorDashboardPage(),
         '/lasher/worker': (context) => const WorkerDashboardPage(),
-        // Note: ApproveWorkersPage is also navigated to directly for now
       },
     );
   }
