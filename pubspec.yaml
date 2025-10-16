@@ -13,6 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   lottie: ^3.1.2
   intl: ^0.19.0
+  firebase_core: ^3.1.1 # This is needed for Firebase
 
 dev_dependencies:
   flutter_test:

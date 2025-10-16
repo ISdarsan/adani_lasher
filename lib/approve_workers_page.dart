@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'worker_details_page.dart'; // Import the new details page
+import 'worker_details_page.dart'; // Import the details page
 
 class ApproveWorkersPage extends StatelessWidget {
   const ApproveWorkersPage({super.key});
 
-  // Dummy data for pending applications - later this will come from Firebase
+  // Dummy data for pending applications. This will later come from Firebase.
   final List<Map<String, String>> pendingWorkers = const [
     {'name': 'Arjun Kumar', 'phone': '+91 9876543210', 'photoUrl': 'https://placehold.co/100x100/EFEFEF/333333?text=AK', 'dob': '15/05/1995', 'idUrl': 'https://placehold.co/600x400/EFEFEF/333333?text=ID+Proof'},
     {'name': 'Priya Sharma', 'phone': '+91 9123456789', 'photoUrl': 'https://placehold.co/100x100/EFEFEF/333333?text=PS', 'dob': '22/08/1998', 'idUrl': 'https://placehold.co/600x400/EFEFEF/333333?text=ID+Proof'},
@@ -14,7 +14,7 @@ class ApproveWorkersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Reusable gradient for a consistent brand look
-    final LinearGradient adaniGradient = const LinearGradient(
+    const LinearGradient adaniGradient = LinearGradient(
       colors: [
         Color(0xFF0066B3), // Blue
         Color(0xFF6C3FB5), // Purple
@@ -30,7 +30,7 @@ class ApproveWorkersPage extends StatelessWidget {
         preferredSize: const Size.fromHeight(50),
         child: AppBar(
           flexibleSpace: Container(
-            decoration: BoxDecoration(gradient: adaniGradient),
+            decoration: const BoxDecoration(gradient: adaniGradient),
           ),
           title: const Text(
             'Pending Approvals',
@@ -68,7 +68,7 @@ class ApproveWorkersPage extends StatelessWidget {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -99,25 +99,8 @@ class ApproveWorkersPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Quick action buttons
-                    IconButton(
-                      icon: const Icon(Icons.check_circle, color: Colors.green, size: 30),
-                      onPressed: () {
-                        // TODO: Implement approve logic
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${worker['name']} has been approved.')),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.cancel, color: Colors.red, size: 30),
-                      onPressed: () {
-                        // TODO: Implement reject logic
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${worker['name']} has been rejected.')),
-                        );
-                      },
-                    ),
+                    // Arrow icon to indicate that the item is tappable
+                    const Icon(Icons.arrow_forward_ios, color: Colors.grey),
                   ],
                 ),
               ),
@@ -128,4 +111,3 @@ class ApproveWorkersPage extends StatelessWidget {
     );
   }
 }
-

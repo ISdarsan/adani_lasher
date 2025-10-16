@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class WorkerDetailsPage extends StatelessWidget {
   // We will pass the specific worker's data to this page
   final Map<String, String> worker;
 
   const WorkerDetailsPage({super.key, required this.worker});
+
+  // Function to calculate age from Date of Birth string (dd/MM/yyyy)
+  String _calculateAge(String dobString) {
+    try {
+      final dob = DateFormat('dd/MM/yyyy').parse(dobString);
+      final today = DateTime.now();
+      int age = today.year - dob.year;
+      if (today.month < dob.month || (today.month == dob.month && today.day < dob.day)) {
+        age--;
+      }
+      return age.toString();
+    } catch (e) {
+      return 'N/A'; // Return 'Not Available' if the date format is wrong
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +85,7 @@ class WorkerDetailsPage extends StatelessWidget {
               details: {
                 'Phone Number': worker['phone']!,
                 'Date of Birth': worker['dob']!,
+                'Age': _calculateAge(worker['dob']!),
               },
             ),
             const SizedBox(height: 16),
@@ -79,15 +97,15 @@ class WorkerDetailsPage extends StatelessWidget {
           ],
         ),
       ),
-      // Floating action buttons for approve/reject
+      // Floating action buttons for approve/reject are now on this page
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
             Expanded(
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.cancel_outlined),
-                label: const Text('Reject'),
+                icon: const Icon(Icons.cancel_outlined, color: Colors.white),
+                label: const Text('Reject', style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   // TODO: Implement reject logic
                   Navigator.pop(context); // Go back to the list
@@ -95,15 +113,15 @@ class WorkerDetailsPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.check_circle_outline),
-                label: const Text('Approve'),
+                icon: const Icon(Icons.check_circle_outline, color: Colors.white),
+                label: const Text('Approve', style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   // TODO: Implement approve logic
                   Navigator.pop(context); // Go back to the list
@@ -111,7 +129,7 @@ class WorkerDetailsPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -147,12 +165,15 @@ class WorkerDetailsPage extends StatelessWidget {
             ),
             const Divider(height: 20),
             if (isImage && imageUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                    height: 200, // Constrain the height of the ID proof image
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, size: 50, color: Colors.red),
+                  ),
                 ),
               )
             else if (details != null)
