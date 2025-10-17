@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'worker_details_page.dart'; // Import the details page
 
 class ApproveWorkersPage extends StatelessWidget {
   const ApproveWorkersPage({super.key});
-
-  // Dummy data for pending applications. This will later come from Firebase.
-  final List<Map<String, String>> pendingWorkers = const [
-    {'name': 'Arjun Kumar', 'phone': '+91 9876543210', 'photoUrl': 'https://placehold.co/100x100/EFEFEF/333333?text=AK', 'dob': '15/05/1995', 'idUrl': 'https://placehold.co/600x400/EFEFEF/333333?text=ID+Proof'},
-    {'name': 'Priya Sharma', 'phone': '+91 9123456789', 'photoUrl': 'https://placehold.co/100x100/EFEFEF/333333?text=PS', 'dob': '22/08/1998', 'idUrl': 'https://placehold.co/600x400/EFEFEF/333333?text=ID+Proof'},
-    {'name': 'Ravi Shankar', 'phone': '+91 8765432109', 'photoUrl': 'https://placehold.co/100x100/EFEFEF/333333?text=RS', 'dob': '01/12/1990', 'idUrl': 'https://placehold.co/600x400/EFEFEF/333333?text=ID+Proof'},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -45,66 +39,107 @@ class ApproveWorkersPage extends StatelessWidget {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: pendingWorkers.length,
-        itemBuilder: (context, index) {
-          final worker = pendingWorkers[index];
-          return Card(
-            elevation: 4,
-            margin: const EdgeInsets.only(bottom: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(15),
-              onTap: () {
-                // Navigate to the detail page, passing the worker's data
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WorkerDetailsPage(worker: worker),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: NetworkImage(worker['photoUrl']!),
-                      backgroundColor: Colors.grey[200],
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            worker['name']!,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            worker['phone']!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Arrow icon to indicate that the item is tappable
-                    const Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  ],
-                ),
+      body: StreamBuilder<QuerySnapshot>(
+        // Create a stream to listen to the 'workers' collection
+        // and filter by 'status' == 'pending'
+        stream: FirebaseFirestore.instance
+            .collection('workers')
+            .where('status', isEqualTo: 'pending')
+            .snapshots(),
+
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          // Handle errors
+          if (snapshot.hasError) {
+            return Center(child: Text('Something went wrong: ${snapshot.error}'));
+          }
+
+          // Show a loading indicator while waiting for data
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // If there's no data or the collection is empty
+          if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text(
+                'No pending approvals.',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
-            ),
+            );
+          }
+
+          // If we have data, build the list using your card design
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final document = snapshot.data!.docs[index];
+              final data = document.data()! as Map<String, dynamic>;
+              final workerId = document.id;
+
+              // Use a placeholder if photoUrl is missing, otherwise use the real URL
+              final photoUrl = data['photoUrl'] as String? ?? 'https://placehold.co/100x100/EFEFEF/333333?text=NA';
+
+              return Card(
+                elevation: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  onTap: () {
+                    // Navigate to the detail page, passing the worker's real data and ID
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WorkerDetailsPage(
+                          workerData: data,
+                          workerId: workerId,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: NetworkImage(photoUrl),
+                          backgroundColor: Colors.grey[200],
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                data['name'] ?? 'No Name',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                data['phoneNumber'] ?? 'No Phone',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Arrow icon to indicate that the item is tappable
+                        const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           );
         },
       ),
