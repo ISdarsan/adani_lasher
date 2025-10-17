@@ -138,7 +138,7 @@ class _RoleSplashPageState extends State<RoleSplashPage> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Verifying your role...',
+                'Loading...',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
