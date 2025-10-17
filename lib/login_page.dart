@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'role_splash_page.dart'; // Import the new role splash page
+import 'registration_page.dart'; // For navigation to registration
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +14,49 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  // --- Login Logic ---
+  Future<void> _loginUser() async {
+    // Show a loading indicator
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // If login is successful, navigate to the RoleSplashPage
+      // It will handle the role checking internally.
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const RoleSplashPage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      // Show an error message if login fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? 'Login failed. Please try again.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    } finally {
+      // Hide the loading indicator
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,37 +142,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 24),
               GestureDetector(
-                onTap: () {
-                  final email = _emailController.text.trim();
-                  final pass = _passwordController.text.trim();
-                  String? role;
-
-                  if (email == 'admin@lasher.com' && pass == '1234') {
-                    role = 'Admin';
-                  } else if (email == 'supervisor@lasher.com' &&
-                      pass == '1234') {
-                    role = 'Supervisor';
-                  } else if (email == 'worker@lasher.com' && pass == '1234') {
-                    role = 'Worker';
-                  }
-
-                  if (role != null) {
-                    // Navigate to the RoleSplashPage with the correct role
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RoleSplashPage(role: role!),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Invalid email or password'),
-                        backgroundColor: Colors.redAccent,
-                      ),
-                    );
-                  }
-                },
+                onTap: _isLoading ? null : _loginUser, // Disable button when loading
                 child: Container(
                   width: double.infinity,
                   height: 55,
@@ -142,8 +157,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  child: const Center(
-                    child: Text(
+                  child: Center(
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
                       'Login',
                       style: TextStyle(
                         fontSize: 20,
@@ -169,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/register');
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const RegistrationPage()));
                     },
                     child: const Text(
                       'Register',
@@ -186,4 +203,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
